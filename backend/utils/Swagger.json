@@ -1,0 +1,920 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "<PROJECT_NAME> UI",
+    "description": "These are all checked and workin API's for the project.",
+    "serviceProvidedBy": "https://apexwebstudios.net/",
+    "contact": {
+      "email": "info@apexwebstudios.net"
+    },
+    "version": "1.0.11"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3001",
+      "description": "This is a service in development mode",
+      "_comments": "All end points from indexRoutes.js should be replaced at the end of the URL."
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Admin": {
+        "type": "object",
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "phoneNumber",
+          "password",
+          "stripeCustomerId",
+          "dob",
+          "gender",
+          "profilePicture",
+          "userType",
+          "authType",
+          "otp",
+          "isVerified",
+          "passwordResetOtp",
+          "preferences"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "required": [true, "First Name is required"]
+          },
+          "lastName": {
+            "type": "string",
+            "required": [true, "Last Name is required"]
+          },
+          "email": {
+            "type": "string",
+            "required": [true, "Email is required"],
+            "unique": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "required": [true, "Phone number is required"]
+          },
+          "password": {
+            "type": "String",
+            "required": [true, "Password is required"],
+            "minlength": 6
+          },
+          "stripeCustomerId": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "date",
+            "format": "date",
+            "required": "Date of Birth is required"
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["male", "female", "other"]
+          },
+          "profilePicture": {
+            "url": {
+              "type": "string"
+            },
+            "public_id": {
+              "type": "string"
+            }
+          },
+          "userType": {
+            "type": "string",
+            "required": "User type is required",
+            "enum": ["user", "serviceProvider", "admin"],
+            "default": "admin"
+          },
+          "authType": {
+            "type": "string",
+            "enum": ["email", "google", "apple"]
+          },
+          "otp": {
+            "code": {
+              "type": "string"
+            },
+            "expiry": {
+              "type": "date"
+            }
+          },
+          "isVerified": {
+            "type": "boolean",
+            "default": false
+          },
+          "passwordResetOtp": {
+            "code": {
+              "type": "string"
+            },
+            "expiry": {
+              "type": "date"
+            }
+          },
+          "Preferences": {
+            "type": "object",
+            "$ref": "#/components/schemas/Preferences"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "phoneNumber",
+          "userType",
+          "password",
+          "isVerified"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@example.com"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "+92 xxxxxxxxxx"
+          },
+          "userType": {
+            "type": "string",
+            "enum": ["user", "service provider"],
+            "default": "user"
+          },
+          "stripeCustomerId": {
+            "type": "string",
+            "example": "cus_Jk5kLFVz0s2aBc"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date",
+            "example": "1990-01-01"
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["male", "female", "other"],
+            "example": "male"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123"
+          },
+          "authType": {
+            "type": "string",
+            "enum": ["email", "google", "apple"],
+            "default": "email"
+          },
+          "oauthToken": {
+            "type": "string",
+            "example": "ya29.a0AfH6SMA-D9zDJ2GzTV5T"
+          },
+          "profilePicture": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "example": "http://example.com/picture.jpg"
+              },
+              "public_id": {
+                "type": "string",
+                "example": "abc123"
+              }
+            }
+          },
+          "isVerified": {
+            "type": "boolean",
+            "default": "false"
+          },
+          "passwordResetExpires": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-06-30T00:00:00Z"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-06-01T00:00:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-06-15T00:00:00Z"
+          },
+          "Preferences": {
+            "type": "object",
+            "$ref": "#/components/schemas/Preferences"
+          }
+        }
+      },
+      "Preferences": {
+        "type": "object",
+        "properties": {
+          "bio": {
+            "type": "string"
+          },
+          "address": {
+            "type": "object",
+            "reqiored": true,
+            "properties": {
+              "address": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "number"
+              },
+              "currencyCode": {
+                "type": "string",
+                "enum": ["CAD", "USD"]
+              }
+            }
+          }
+        }
+      },
+      "_comments": "All schemas as per requirement should be added from this line."
+    }
+  },
+  "tags": [
+    {
+      "name": "<PROJECT_NAME> management system",
+      "description": "API endpoints for XYZ"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["User Management System"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phoneNumber": {
+                    "type": "string"
+                  },
+                  "userType": {
+                    "type": "string",
+                    "enum": ["user", "service provider"]
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 6
+                  },
+                  "dob": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": ["male", "female", "other"]
+                  },
+                  "authType": {
+                    "type": "string",
+                    "enum": ["email", "google", "apple"]
+                  }
+                },
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "phoneNumber",
+                  "userType",
+                  "password",
+                  "dob",
+                  "gender",
+                  "authType"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OTP sent successfully to your email. Please verify to complete registration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "phoneNumber": {
+                          "type": "string"
+                        },
+                        "userType": {
+                          "type": "string",
+                          "enum": ["user", "service provider"]
+                        },
+                        "dob": {
+                          "type": "string",
+                          "format": "date"
+                        },
+                        "gender": {
+                          "type": "string",
+                          "enum": ["male", "female", "other"]
+                        },
+                        "authType": {
+                          "type": "string",
+                          "enum": ["email", "google", "apple"]
+                        },
+                        "otp": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "expiry": {
+                            "type": "date"
+                          }
+                        },
+                        "isVerified": {
+                          "type": "boolean",
+                          "default": "false"
+                        }
+                      }
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Please provide all required fields"
+          },
+          "401": {
+            "description": "User with same email or phone number already exist"
+          },
+          "500": {
+            "description": "Error sending OTP or invalid authentication type"
+          }
+        }
+      }
+    },
+    "/auth/verify-otp": {
+      "post": {
+        "summary": "OPT Verification",
+        "tags": ["User Management System"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "otp": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "expiry": {
+                      "type": "date"
+                    }
+                  }
+                },
+                "required": ["email", "otp"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP successfully verified.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "phoneNumber": {
+                          "type": "string"
+                        },
+                        "userType": {
+                          "type": "string",
+                          "enum": ["user", "service provider"]
+                        },
+                        "dob": {
+                          "type": "string",
+                          "format": "date"
+                        },
+                        "gender": {
+                          "type": "string",
+                          "enum": ["male", "female", "other"]
+                        },
+                        "authType": {
+                          "type": "string",
+                          "enum": ["email", "google", "apple"]
+                        },
+                        "otp": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "expiry": {
+                            "type": "date"
+                          }
+                        },
+                        "isVerified": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or expired OTP entered."
+          },
+          "404": {
+            "description": "User not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login to the system",
+        "tags": ["User Management System"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "aarishhassan98@gmail.com"
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "example": "03020217897"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "test"
+                  },
+                  "authType": {
+                    "type": "string",
+                    "example": "email"
+                  }
+                },
+                "required": ["email", "phoneNumber", "password", "authType"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "phoneNumber": {
+                          "type": "string"
+                        },
+                        "userType": {
+                          "type": "string",
+                          "enum": ["user", "service provider"]
+                        },
+                        "dob": {
+                          "type": "string",
+                          "format": "date"
+                        },
+                        "gender": {
+                          "type": "string",
+                          "enum": ["male", "female", "other"]
+                        },
+                        "authType": {
+                          "type": "string",
+                          "enum": ["email", "google", "apple"]
+                        },
+                        "otp": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "expiry": {
+                            "type": "date"
+                          }
+                        },
+                        "isVerified": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Please provide email or phone number and password"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          },
+          "500": {
+            "description": "Invalid authentication type"
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "summary": "Forgot Password",
+        "tags": ["User Management System"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset email sent have been sent to your email address.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Invalid authentication type or Error sending password reset email"
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "summary": "Reset your new password her.",
+        "tags": ["User Management System"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "otp": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "expiry": {
+                      "type": "date"
+                    }
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "otp", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password have been reset successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User not found"
+          },
+          "404": {
+            "description": "Invalid or expired OTP"
+          },
+          "500": {
+            "description": "Invalid authentication type"
+          }
+        }
+      }
+    },
+    "/auth/update-password": {
+      "put": {
+        "summary": "Update your password.",
+        "tags": ["User Management System"],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "requestBody": {
+          "required": ["currentPassword", "newPassword"],
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/auth/profile": {
+      "get": {
+        "summary": "Get user profile",
+        "tags": ["User Management System"],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "_comments": "security should be added on all paths which requires athentication for accesing the end points.",
+        "responses": {
+          "200": {
+            "description": "User profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token is missing or invalid"
+          }
+        }
+      }
+    },
+    "/auth/profile-update": {
+      "put": {
+        "summary": "User profile update",
+        "tags": ["User Management System"],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "type": "string"
+                  },
+                  "gender": {
+                    "type": "string"
+                  },
+                  "profilePicture": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "public_id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "phoneNumber",
+                  "gender",
+                  "profilePicture"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "phoneNumber": {
+                          "type": "string"
+                        },
+                        "gender": {
+                          "type": "string",
+                          "enum": ["male", "female", "other"]
+                        },
+                        "profilePicture": {
+                          "url": {
+                            "type": "string"
+                          },
+                          "public_id": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "_comments": "All paths as per requirement should be added from this line."
+  }
+}
